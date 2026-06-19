@@ -8,7 +8,10 @@ from fastapi import FastAPI, Request, Form
 from database import engine, SessionLocal
 from models import Base, User
 import bcrypt
-from auth import create_access_token
+from auth import (
+    create_access_token,
+    verify_token
+)
 from fastapi.responses import RedirectResponse
 
 
@@ -116,6 +119,26 @@ def login_user(
 
 @app.get("/dashboard")
 def dashboard(request: Request):
+
+    token = request.cookies.get(
+        "access_token"
+    )
+
+    if not token:
+        return RedirectResponse(
+            url="/login",
+            status_code=303
+        )
+
+    try:
+        verify_token(token)
+
+    except:
+        return RedirectResponse(
+            url="/login",
+            status_code=303
+        )
+
     return templates.TemplateResponse(
         request=request,
         name="dashboard.html"
