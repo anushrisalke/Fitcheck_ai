@@ -1,3 +1,4 @@
+import jwt
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI
@@ -7,10 +8,13 @@ from fastapi import FastAPI, Request, Form
 from database import engine, SessionLocal
 from models import Base, User
 import bcrypt
-
+from auth import create_access_token
+from fastapi.responses import RedirectResponse
 
 
 app = FastAPI()
+
+SECRET_KEY = "fitcheck_secret_key"
 
 templates = Jinja2Templates(directory="templates")
 
@@ -89,10 +93,30 @@ def login_user(
     db.close()
 
     if password_match:
-        return {
-            "message": "Login Successful"
-        }
+
+     token = create_access_token(
+        user.email
+    )
+
+    response = RedirectResponse(
+        url="/dashboard",
+        status_code=303
+    )
+
+    response.set_cookie(
+        key="access_token",
+        value=token
+    )
+
+    return response
 
     return {
         "message": "Invalid Password"
     }
+
+@app.get("/dashboard")
+def dashboard(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard.html"
+    )
