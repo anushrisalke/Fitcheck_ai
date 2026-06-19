@@ -56,3 +56,43 @@ def register_user(
     return {
         "message": "User Registered Successfully"
     }
+
+@app.get("/login")
+def login_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="login.html"
+    )
+
+@app.post("/login")
+def login_user(
+    email: str = Form(...),
+    password: str = Form(...)
+):
+    db = SessionLocal()
+
+    user = db.query(User).filter(
+        User.email == email
+    ).first()
+
+    if not user:
+        db.close()
+        return {
+            "message": "User Not Found"
+        }
+
+    password_match = bcrypt.checkpw(
+        password.encode(),
+        user.password.encode()
+    )
+
+    db.close()
+
+    if password_match:
+        return {
+            "message": "Login Successful"
+        }
+
+    return {
+        "message": "Invalid Password"
+    }
