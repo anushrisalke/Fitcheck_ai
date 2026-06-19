@@ -143,3 +143,43 @@ def dashboard(request: Request):
         request=request,
         name="dashboard.html"
     )
+
+@app.get("/analyze")
+def analyze_page(request: Request):
+
+    token = request.cookies.get(
+        "access_token"
+    )
+
+    if not token:
+        return RedirectResponse(
+            url="/login",
+            status_code=303
+        )
+
+    try:
+        verify_token(token)
+
+    except:
+        return RedirectResponse(
+            url="/login",
+            status_code=303
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="analyze.html"
+    )
+
+@app.post("/analyze")
+def analyze_product(
+    request: Request,
+    product_url: str = Form(...)
+):
+    return templates.TemplateResponse(
+        request=request,
+        name="result.html",
+        context={
+            "url": product_url
+        }
+    )
