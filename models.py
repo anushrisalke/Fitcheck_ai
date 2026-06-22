@@ -35,3 +35,18 @@ class Analysis(Base):
     url: Mapped[str] = mapped_column(
         String(500)
     )
+
+    product_name: Mapped[str] = mapped_column(
+        String(200),
+        default=""
+    )
+
+    price: Mapped[str] = mapped_column(
+        String(50),
+        default=""
+    )
+
+    rating: Mapped[str] = mapped_column(
+        String(20),
+        default=""
+    )

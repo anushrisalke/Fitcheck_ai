@@ -7,6 +7,7 @@ from models import Base
 from fastapi import FastAPI, Request, Form
 from database import engine, SessionLocal
 from models import Base, User,Analysis
+from scraper import get_product_data
 import bcrypt
 from auth import (
     create_access_token,
@@ -17,7 +18,7 @@ from fastapi.responses import RedirectResponse
 
 app = FastAPI()
 
-SECRET_KEY = "fitcheck_secret_key"
+SECRET_KEY = "fitcheck_ai_super_secret_key_2026"
 
 templates = Jinja2Templates(directory="templates")
 
@@ -189,9 +190,16 @@ def analyze_product(
         User.email == payload["email"]
     ).first()
 
+    data = get_product_data(
+        product_url
+    )
+
     analysis = Analysis(
         user_id=user.id,
-        url=product_url
+        url=product_url,
+        product_name=data["product_name"],
+        price=data["price"],
+        rating=data["rating"]
     )
 
     db.add(analysis)
@@ -204,7 +212,10 @@ def analyze_product(
         request=request,
         name="result.html",
         context={
-            "url": product_url
+            "url": product_url,
+            "product_name": data["product_name"],
+            "price": data["price"],
+            "rating": data["rating"]
         }
     )
 
