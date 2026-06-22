@@ -6,7 +6,7 @@ from database import engine
 from models import Base
 from fastapi import FastAPI, Request, Form
 from database import engine, SessionLocal
-from models import Base, User
+from models import Base, User,Analysis
 import bcrypt
 from auth import (
     create_access_token,
@@ -176,6 +176,30 @@ def analyze_product(
     request: Request,
     product_url: str = Form(...)
 ):
+
+    token = request.cookies.get(
+        "access_token"
+    )
+
+    payload = verify_token(token)
+
+    db = SessionLocal()
+
+    user = db.query(User).filter(
+        User.email == payload["email"]
+    ).first()
+
+    analysis = Analysis(
+        user_id=user.id,
+        url=product_url
+    )
+
+    db.add(analysis)
+
+    db.commit()
+
+    db.close()
+
     return templates.TemplateResponse(
         request=request,
         name="result.html",
