@@ -118,6 +118,20 @@ def login_user(
         "message": "Invalid Password"
     }
 
+@app.get("/logout")
+def logout():
+
+    response = RedirectResponse(
+        url="/login",
+        status_code=303
+    )
+
+    response.delete_cookie(
+        key="access_token"
+    )
+
+    return response
+
 @app.get("/dashboard")
 def dashboard(request: Request):
 
