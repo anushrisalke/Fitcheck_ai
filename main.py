@@ -207,3 +207,38 @@ def analyze_product(
             "url": product_url
         }
     )
+
+@app.get("/history")
+def history_page(request: Request):
+
+    token = request.cookies.get(
+        "access_token"
+    )
+
+    if not token:
+        return RedirectResponse(
+            url="/login",
+            status_code=303
+        )
+
+    payload = verify_token(token)
+
+    db = SessionLocal()
+
+    user = db.query(User).filter(
+        User.email == payload["email"]
+    ).first()
+
+    analyses = db.query(Analysis).filter(
+        Analysis.user_id == user.id
+    ).all()
+
+    db.close()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="history.html",
+        context={
+            "analyses": analyses
+        }
+    )

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>History</title>
+</head>
+<body>
+
+<h1>Analysis History</h1>
+
+{% for analysis in analyses %}
+
+<p>{{ analysis.url }}</p>
+
+<hr>
+
+{% endfor %}
+
+</body>
+</html>
