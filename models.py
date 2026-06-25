@@ -50,3 +50,22 @@ class Analysis(Base):
         String(20),
         default=""
     )
+
+    website: Mapped[str] = mapped_column(
+    String(50),
+    default=""
+    )
+
+    brand: Mapped[str] = mapped_column(
+    String(100),
+    default=""
+    )
+
+    image_url: Mapped[str] = mapped_column(
+    String(500),
+    default=""
+    )
+
+    buy_score: Mapped[int] = mapped_column(
+    default=0
+    )

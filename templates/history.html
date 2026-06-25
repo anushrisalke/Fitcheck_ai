@@ -9,7 +9,43 @@
 
 {% for analysis in analyses %}
 
-<p>{{ analysis.url }}</p>
+<div>
+
+   <h2>{{ analysis.product_name }}</h2>
+
+<p>
+    <b>Website:</b>
+    {{ analysis.website }}
+</p>
+
+<p>
+    <b>Brand:</b>
+    {{ analysis.brand }}
+</p>
+
+<p>
+    <b>Price:</b>
+    {{ analysis.price }}
+</p>
+
+<p>
+    <b>Rating:</b>
+    {{ analysis.rating }}
+</p>
+
+<p>
+    <b>Buy Score:</b>
+    {{ analysis.buy_score }}/100
+</p>
+
+<p>
+    <b>URL:</b>
+    {{ analysis.url }}
+</p>
+
+<hr>
+
+</div>
 
 <hr>
 

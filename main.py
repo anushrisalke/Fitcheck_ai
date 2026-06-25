@@ -7,7 +7,10 @@ from models import Base
 from fastapi import FastAPI, Request, Form
 from database import engine, SessionLocal
 from models import Base, User,Analysis
-from scraper import get_product_data
+from scraper import (
+    get_product_data,
+    calculate_buy_score
+)
 import bcrypt
 from auth import (
     create_access_token,
@@ -208,12 +211,20 @@ def analyze_product(
         product_url
     )
 
+    buy_score = calculate_buy_score(
+    data
+)
+
     analysis = Analysis(
         user_id=user.id,
-        url=product_url,
+       url=product_url,
+        website=data["website"],
         product_name=data["product_name"],
+        brand=data["brand"],
         price=data["price"],
-        rating=data["rating"]
+        rating=data["rating"],
+       image_url=data["image_url"],
+       buy_score=buy_score
     )
 
     db.add(analysis)
@@ -226,11 +237,14 @@ def analyze_product(
         request=request,
         name="result.html",
         context={
-            "url": product_url,
-            "product_name": data["product_name"],
-            "price": data["price"],
-            "rating": data["rating"]
-        }
+    "url": product_url,
+    "website": data["website"],
+    "product_name": data["product_name"],
+    "brand": data["brand"],
+    "price": data["price"],
+    "rating": data["rating"],
+    "buy_score": buy_score
+}
     )
 
 @app.get("/history")

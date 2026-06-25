@@ -12,9 +12,7 @@ def get_product_data(url):
 
     headers={
 
-        "User-Agent":
-
-        "Mozilla/5.0"
+        "User-Agent": "Mozilla/5.0"
     }
 )
 
@@ -26,17 +24,44 @@ def get_product_data(url):
         title = soup.title.string
 
         return {
+            "website": url.split("/")[2],
+
             "product_name": title,
+
+            "brand": "Not Found",
+
             "price": "Not Found",
-            "rating": "Not Found"
+
+             "rating": "Not Found",
+
+            "image_url": "Not Found"
         }
 
     except Exception as e:
 
-     print("SCRAPER ERROR:", e)
+      print("SCRAPER ERROR:", e)
 
-    return {
-        "product_name": "Error",
-        "price": "Error",
-        "rating": "Error"
-    }
+      return {
+        "website": "Error",
+         "product_name": "Error",
+          "brand": "Error",
+          "price": "Error",
+          "rating": "Error",
+          "image_url": "Error"
+         }
+
+def calculate_buy_score(data):
+
+    score = 0
+
+    if data["product_name"] != "Error":
+        score += 40
+
+    if data["price"] != "Not Found":
+        score += 30
+
+    if data["rating"] != "Not Found":
+        score += 30
+
+    return score
+
